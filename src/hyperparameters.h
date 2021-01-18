@@ -28,7 +28,7 @@ typedef enum {
 class Hyperparameters {
  public:
     Hyperparameters();
-    Hyperparameters(const string& confFile);
+    Hyperparameters(const string& confFile, const string& dataFile, const string& labelsFile);
 
     // Forest
     int numRandomTests;

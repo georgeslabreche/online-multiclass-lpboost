@@ -19,7 +19,7 @@
 using namespace std;
 using namespace libconfig;
 
-Hyperparameters::Hyperparameters(const string& confFile) {
+Hyperparameters::Hyperparameters(const string& confFile, const string& dataFile, const string& labelsFile){
     cout << "Loading config file: " << confFile << " ... ";
 
     Config configFile;
@@ -60,10 +60,10 @@ Hyperparameters::Hyperparameters(const string& confFile) {
     numEpochs = configFile.lookup("Experimenter.numEpochs");
 
     // Data
-    trainData = (const char *) configFile.lookup("Data.trainData");
-    trainLabels = (const char *) configFile.lookup("Data.trainLabels");
-    testData = (const char *) configFile.lookup("Data.testData");
-    testLabels = (const char *) configFile.lookup("Data.testLabels");
+    trainData = dataFile; //(const char *) configFile.lookup("Data.trainData");
+    trainLabels = labelsFile; //(const char *) configFile.lookup("Data.trainLabels");
+    testData = ""; //(const char *) configFile.lookup("Data.testData");
+    testLabels = ""; //(const char *) configFile.lookup("Data.testLabels");
 
     // Output
     savePath = (const char *) configFile.lookup("Output.savePath");

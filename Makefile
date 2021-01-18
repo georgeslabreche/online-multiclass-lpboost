@@ -4,13 +4,20 @@
 
 # Compiler options
 CC = g++
+#CC = /usr/bin/arm-linux-gnueabihf-g++
 
-INCLUDEPATH = -I/usr/local/include -I$(HOME)/local/include
+INCLUDEPATH = -I/usr/local/include -I../eigen -I$(HOME)/local/include
 LINKPATH = -L/usr/local/lib -L$(HOME)/local/lib
 
 # OPTIMIZED
+# Compile for gcc development environment:
 CFLAGS = -c -O3 -Wall -march=native -mtune=native -DNDEBUG -Wno-deprecated
-LDFLAGS = -lconfig++
+
+# Compile for ARM gcc target environment:
+#CFLAGS = -c -O3 -Wall -DNDEBUG -Wno-deprecated
+
+# libconfig++ depedency.
+LDFLAGS = -lconfig++ -lboost_serialization
 
 # Source directory and files
 SOURCEDIR = src
@@ -21,11 +28,12 @@ LIBLARANKDIR := $(SOURCEDIR)/linear_larank
 
 # Target output
 BUILDTARGET = OMCBoost
+#BUILDTARGET = OrbitAI_Boost
 
 # Build
 all: $(BUILDTARGET)
 $(BUILDTARGET): $(OBJECTS) $(SOURCES) $(HEADERS) $(LIBLARANKDIR)/LaRank.o $(LIBLARANKDIR)/vectors.o 
-	$(CC) $(LINKPATH) $(LDFLAGS) $(OBJECTS) $(LIBLARANKDIR)/LaRank.o $(LIBLARANKDIR)/vectors.o -o $@
+	$(CC) $(LINKPATH) $(OBJECTS) $(LIBLARANKDIR)/LaRank.o $(LIBLARANKDIR)/vectors.o -o $@ $(LDFLAGS)
 
 .cpp.o:
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $< -o $@
