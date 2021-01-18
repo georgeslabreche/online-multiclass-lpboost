@@ -37,6 +37,9 @@
 #include <cfloat>
 #include <cassert>
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 #define STDEXT_NAMESPACE __gnu_cxx
 #define std_hash_map STDEXT_NAMESPACE::hash_map
 #define std_hash_set STDEXT_NAMESPACE::hash_set
@@ -377,6 +380,20 @@ public:
     double C;
     double tau;
 };
+
+
+namespace boost {
+    namespace serialization {
+
+        template<class Archive>
+        void serialize(Archive& ar, Machine& machine, const unsigned int version)
+        {
+            ar & machine.classes;
+            ar & machine.C;
+            ar & machine.tau;
+        } 
+   } // namespace serialization
+} // namespace boost
 
 class LaRankOutput {
 public:

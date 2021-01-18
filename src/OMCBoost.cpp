@@ -17,6 +17,7 @@
 #include <string>
 #include <string.h>
 #include <libconfig.h++>
+#include <fstream>
 
 #include "data.h"
 #include "experimenter.h"
@@ -44,6 +45,7 @@ void help() {
     cout << "\t -c : \t\t path to the config file." << endl << endl;
     cout << "\t --data : \t path to the training data file." << endl;
     cout << "\t --labels : \t path to the training labels file." << endl;
+    cout << "\t --new | --update : \t path to the model file to either save to (--save) or load and update (--update)." << endl;
     cout << "\t --ort : \t use Online Random Tree (ORT) algorithm." << endl;
     cout << "\t --orf : \t use Online Random Forest (ORF) algorithm." << endl;
     cout << "\t --omcb : \t use Online MCBoost algorithm." << endl;
@@ -59,6 +61,14 @@ void help() {
     cout << "\tExamples:" << endl;
     cout << "\t ./OMCBoost -c conf/orf.conf --orf --train --test" << endl;
 #endif
+}
+
+void save_model(Classifier* pModel, const string& filename)
+{
+    std::ofstream ofs(filename);
+    boost::archive::text_oarchive oa(ofs);
+    oa << *pModel;
+    ofs.close();
 }
 
 int main(int argc, char *argv[]) {
@@ -233,6 +243,8 @@ int main(int argc, char *argv[]) {
         }
 #endif
     }
+
+    save_model(pModel, modelFilename);
 
     // Preparing for exit
     delete pModel;

@@ -17,6 +17,9 @@
 #include "data.h"
 #include "hyperparameters.h"
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 using namespace std;
 
 class Classifier {
@@ -32,10 +35,26 @@ class Classifier {
         return m_name;
     }
 
- protected:
+ // Make public or else cannot serialize.
+ //protected:
     const int* m_numClasses;
     const Hyperparameters* m_hp;
     string m_name;
 };
+
+namespace boost {
+    namespace serialization {
+
+        template<class Archive>
+        void serialize(Archive& ar, Classifier& classifer, const unsigned int version)
+        {
+            ar & classifer.m_numClasses;
+            ar & classifer.m_hp;
+            ar & classifer.m_name;
+        }
+
+   } // namespace serialization
+} // namespace boost
+
 
 #endif /* CLASSIFIER_H_ */

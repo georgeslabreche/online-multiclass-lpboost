@@ -15,6 +15,10 @@
 #define HYPERPARAMETERS_H_
 
 #include <string>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 using namespace std;
 
 typedef enum {
@@ -70,5 +74,56 @@ class Hyperparameters {
     string savePath;
     int verbose;
 };
+
+
+namespace boost {
+    namespace serialization {
+
+        template<class Archive>
+        void serialize(Archive& ar, Hyperparameters& hp, const unsigned int version)
+        {
+            // Forest
+            ar & hp.numRandomTests;
+            ar & hp.counterThreshold;
+            ar & hp.maxDepth;
+            ar & hp.numTrees;
+
+            // Linear LaRank
+            ar & hp.larankC;
+
+            // Boosting
+            ar & hp.numBases;
+            ar & hp.weakLearner;
+
+            // Online MCBoost
+            ar & hp.shrinkage;
+            ar & hp.lossFunction;
+
+            // Online MCLPBoost
+            ar & hp.C;
+            ar & hp.cacheSize;
+            ar & hp.nuD;
+            ar & hp.nuP;
+            ar & hp.annealingRate;
+            ar & hp.theta;
+            ar & hp.numIterations;
+
+            // Experimenter
+            ar & hp.findTrainError;
+            ar & hp.numEpochs;
+
+            // Data
+            ar & hp.trainData;
+            ar & hp.trainLabels;
+            ar & hp.testData;
+            ar & hp.testLabels;
+
+            // Output
+            ar & hp.savePath;
+            ar & hp.verbose;
+
+        } 
+   } // namespace serialization
+} // namespace boost
 
 #endif /* HYPERPARAMETERS_H_ */

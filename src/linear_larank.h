@@ -21,6 +21,11 @@
 #include "linear_larank/LaRank.h"
 #include "linear_larank/vectors.h"
 
+
+#include <boost/serialization/base_object.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 class LinearLaRank: public Classifier {
  public:
     LinearLaRank(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange);
@@ -30,10 +35,27 @@ class LinearLaRank: public Classifier {
     virtual void update(Sample& sample);
     virtual void eval(Sample& sample, Result& result);
 
- protected:
+ // Make public or else cannot serialize.
+ //protected:
     Machine* m_svm;
     int m_sampleCount;
     const int* m_numFeatures;
 };
+
+
+namespace boost {
+   namespace serialization {
+
+      template<class Archive>
+      void serialize(Archive& ar, LinearLaRank& larank, const unsigned int version)
+      {
+         ar & boost::serialization::base_object<Classifier>(larank);
+         ar & larank.m_svm;
+         ar & larank.m_sampleCount;
+         ar & larank.m_numFeatures;
+      }
+
+   } // namespace serialization
+} // namespace boost
 
 #endif /* LINEARLARANK_H_ */
