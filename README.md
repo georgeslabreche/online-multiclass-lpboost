@@ -11,32 +11,25 @@ Input arguments:
 
       -h | --help : will display this message.
       -c : path to the config file.
-      
+
+      --data : path to the training data file.
+      --labels : path to the training labels file.
+      --new | --update : path to the model file to save to (--save) or load from and update (--update).
+
       --ort : use Online Random Tree (ORT) algorithm.
       --orf : use Online Random Forest (ORF) algorithm.
       --omcb : use Online Multi-Class Gradient Boost (OMCBoost) algorithm.
       --omclp : use Online Multi-Class LPBoost (OMCLPBoost) algorithm.
       --larank : use Online LaRank algorithm.
 
-      --train : train the classifier.
-      --test : test the classifier.
-      --t2 : train and test the classifier at the same time.
-
  Example:
-      ./OMCBoost -c conf/omcb.conf --omclp --train --test
+      ./OrbitAI_OMCBoost -c conf/omcb.conf --data data/dna-train.data --labels data/dna-train.labels --new models/model_larank --larank
 
 Config file:
 ============
 
 All the settings for the classifier are passed via the config file. You can find the config file in "conf" folder. It is
 easy to see what are the meanings behind each of these settings:
-
-Data:
-
-      * trainData = path to the training data (features)
-      * trainLabels = path to the training labels
-      * testData = path to the test data (features)
-      * testLabels = path to test labels
 
 Forest:
 

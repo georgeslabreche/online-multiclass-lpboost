@@ -8,8 +8,6 @@ In order to build the OMCLPBoost package, you need to install these libraries:
   http://eigen.tuxfamily.org/index.php?title=Main_Page
   Version used for this package: 2.0.12
 
-After installing the dependencies, just run the:
+After installing the dependencies, just run the "make" to compile with g++ or "make TARGET=arm" to cross-compile for ARM.
 
-make
-
-This should build the "OMCLPBoost" binary.
+This should build the "OrbitAI_OMCBoost" binary.
