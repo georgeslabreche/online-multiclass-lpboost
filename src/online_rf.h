@@ -188,10 +188,10 @@ class OnlineNode {
          ar & BOOST_SERIALIZATION_NVP(m_counter);
          ar & BOOST_SERIALIZATION_NVP(m_parentCounter);
 
-         /** FIXME: Segmentation fault (core dumped)
-         ar & BOOST_SERIALIZATION_NVP(*m_leftChildNode);
-         ar & BOOST_SERIALIZATION_NVP(*m_rightChildNode);
-         */
+         /** FIXME: terminate called after throwing an instance of 'std::bad_alloc' */
+         //ar & BOOST_SERIALIZATION_NVP(*m_leftChildNode);
+         //ar & BOOST_SERIALIZATION_NVP(*m_rightChildNode);
+         
 
          /** FIXME: triggers a pointer conflict error
           * http://www.bnikolic.co.uk/blog/cpp-boost-ser-conflict.html 
