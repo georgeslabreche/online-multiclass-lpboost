@@ -9,9 +9,11 @@
  * Copyright (C) 2010 Amir Saffari, 
  *                    Institute for Computer Graphics and Vision, 
  *                    Graz University of Technology, Austria
+ * 
+ * Modified 2021 Georges Labreche, georges@tanagraspace.org
+ * For the OrbitAI experiment onboard ESA's OPS-SAT spacecraft.
  */
 
-//#if 0
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -235,9 +237,13 @@ int main(int argc, char *argv[]) {
 #endif
     }
 
+    if(classifier == LARANK || classifier == ORF){
+        
+        pModel->save(modelFilename);
+    }
+
     // Preparing for exit
     delete pModel;
 
     return EXIT_SUCCESS;
 }
-//#endif

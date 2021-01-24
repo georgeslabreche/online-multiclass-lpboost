@@ -9,14 +9,19 @@
  * Copyright (C) 2010 Amir Saffari, 
  *                    Institute for Computer Graphics and Vision, 
  *                    Graz University of Technology, Austria
+ * 
+ * Modified 2021 Georges Labreche, georges@tanagraspace.org
+ * For the OrbitAI experiment onboard ESA's OPS-SAT spacecraft.
  */
 
 #include "booster.h"
 #include "online_rf.h"
 #include "linear_larank.h"
 
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
 Booster::Booster(const Hyperparameters& hp, const int& numClasses, const int& numFeatures,
-                 const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
+                 VectorXd& minFeatRange, VectorXd& maxFeatRange) :
     Classifier(hp, numClasses), m_w(VectorXd::Constant(hp.numBases, hp.shrinkage)) {
     switch (hp.weakLearner) {
     case WEAK_ORF: {

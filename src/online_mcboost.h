@@ -9,6 +9,9 @@
  * Copyright (C) 2010 Amir Saffari, 
  *                    Institute for Computer Graphics and Vision, 
  *                    Graz University of Technology, Austria
+ * 
+ * Modified 2021 Georges Labreche, georges@tanagraspace.org
+ * For the OrbitAI experiment onboard ESA's OPS-SAT spacecraft.
  */
 
 #ifndef ONLINEMCBOOST_H_
@@ -22,20 +25,22 @@
 #include "hyperparameters.h"
 #include "utilities.h"
 
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
 class OnlineMCBoost: public Booster {
- public:
-    OnlineMCBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange);
+    public:
+        OnlineMCBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, VectorXd& minFeatRange, VectorXd& maxFeatRange);
 
-    virtual void update(Sample& sample);
+        virtual void update(Sample& sample);
 
- private:
-    inline double d_exp(const double& fy) {
-        return exp(-fy);
-    }
+    private:
+        inline double d_exp(const double& fy) {
+            return exp(-fy);
+        }
 
-    inline double d_logit(const double& fy) {
-        return 1.0 / (1.0 + exp(fy));
-    }
+        inline double d_logit(const double& fy) {
+            return 1.0 / (1.0 + exp(fy));
+        }
 };
 
 #endif /* ONLINEMCBOOST_H_ */
