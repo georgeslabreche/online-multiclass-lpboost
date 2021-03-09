@@ -65,23 +65,22 @@ class Classifier {
         const Hyperparameters* m_hp;
         string m_name;
 
+    private:
+        friend class boost::serialization::access;
+        BOOST_SERIALIZATION_SPLIT_MEMBER();
+        template <class Archive>
+        void save(Archive& ar, const unsigned int version) const {
+            ar & BOOST_SERIALIZATION_NVP(const_cast<int&>(*m_numClasses));
+            ar & BOOST_SERIALIZATION_NVP(const_cast<Hyperparameters&>(*m_hp));
+            ar & BOOST_SERIALIZATION_NVP(m_name);
+        }
 
-    private :
-    friend class boost::serialization::access;
-    BOOST_SERIALIZATION_SPLIT_MEMBER();
-    template <class Archive>
-    void save(Archive& ar, const unsigned int version) const {
-        ar & BOOST_SERIALIZATION_NVP(const_cast<int&>(*m_numClasses));
-        ar & BOOST_SERIALIZATION_NVP(const_cast<Hyperparameters&>(*m_hp));
-        ar & BOOST_SERIALIZATION_NVP(m_name);
-    }
-
-    template <class Archive>
-    void load(Archive& ar, const unsigned int version) {
-        ar & BOOST_SERIALIZATION_NVP(const_cast<int&>(*m_numClasses));
-        ar & BOOST_SERIALIZATION_NVP(const_cast<Hyperparameters&>(*m_hp));
-        ar & BOOST_SERIALIZATION_NVP(m_name);
-    }
+        template <class Archive>
+        void load(Archive& ar, const unsigned int version) {
+            ar & BOOST_SERIALIZATION_NVP(const_cast<int&>(*m_numClasses));
+            ar & BOOST_SERIALIZATION_NVP(const_cast<Hyperparameters&>(*m_hp));
+            ar & BOOST_SERIALIZATION_NVP(m_name);
+        }
 };
 
 #endif /* CLASSIFIER_H_ */

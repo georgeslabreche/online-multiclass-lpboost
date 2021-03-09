@@ -17,6 +17,14 @@
 #ifndef ONLINE_MCLPBOOST_H
 #define ONLINE_MCLPBOOST_H
 
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <fstream>
+
 #include "classifier.h"
 #include "booster.h"
 #include "data.h"
@@ -29,11 +37,45 @@ class OnlineMCLPBoost : public Booster {
       /* TODO: is there a way to preserve const? */
       OnlineMCLPBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, VectorXd& minFeatRange, VectorXd& maxFeatRange);
 
+      /* default constructor is necessary for serialization. */
+      OnlineMCLPBoost();
+
       virtual void update(Sample& sample);
+
+      virtual void save(const std::string& filename) {
+         std::ofstream ofs(filename);
+         boost::archive::text_oarchive oa(ofs);
+         oa << *this;
+         ofs.close();
+      }
+
+      virtual void load(const std::string& filename) {
+         std::ifstream ifs(filename);
+         boost::archive::text_iarchive ia(ifs);
+         ia >> *this;
+         ifs.close();
+      }
 
    private:
       double m_nuD;
       double m_nuP;
+
+      /* give access to serialization library */
+      friend class boost::serialization::access;
+      BOOST_SERIALIZATION_SPLIT_MEMBER();
+      template <class Archive>
+      void save(Archive& ar, const unsigned int version) const {
+         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Booster);
+         ar & BOOST_SERIALIZATION_NVP(m_nuD);
+         ar & BOOST_SERIALIZATION_NVP(m_nuP);
+      }
+
+      template <class Archive>
+      void load(Archive& ar, const unsigned int version) {
+         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Booster);
+         ar & BOOST_SERIALIZATION_NVP(m_nuD);
+         ar & BOOST_SERIALIZATION_NVP(m_nuP);
+      }
 
    int findYPrime(const Sample& sample, const Result& result);
 };

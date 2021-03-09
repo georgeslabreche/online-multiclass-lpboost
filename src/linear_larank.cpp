@@ -27,6 +27,11 @@ LinearLaRank::LinearLaRank(const Hyperparameters& hp, const int& numClasses, con
     m_name = "LinearLaRank";
 }
 
+/* default constructor is necessary for serialization. */
+LinearLaRank::LinearLaRank() : Classifier() {
+    m_name = "LinearLaRank";
+}
+
 LinearLaRank::~LinearLaRank() {
     delete m_svm;
 }

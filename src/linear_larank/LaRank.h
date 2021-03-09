@@ -367,6 +367,20 @@ public:
     virtual void printStuff(double initime, bool dual) = 0;
     virtual double computeGap() = 0;
 
+    virtual void save(const std::string& filename) {
+        std::ofstream ofs(filename);
+        boost::archive::text_oarchive oa(ofs);
+        oa << *this;
+        ofs.close();
+    }
+
+    virtual void load(const std::string& filename) {
+        std::ifstream ifs(filename);
+        boost::archive::text_iarchive ia(ifs);
+        ia >> *this;
+        ifs.close();
+    }
+
     std_hash_set<int> classes;
 
     unsigned class_count() const
@@ -376,6 +390,31 @@ public:
 
     double C;
     double tau;
+
+    private:
+        /* give access to serialization library */
+        friend class boost::serialization::access;
+        BOOST_SERIALIZATION_SPLIT_MEMBER();
+        template <class Archive>
+        void save(Archive& ar, const unsigned int version) const {
+            
+            /* FIXME: error: ‘class __gnu_cxx::hash_set<int>’ has no member named 'serialize' */
+            //ar & BOOST_SERIALIZATION_NVP(classes);
+
+            ar & BOOST_SERIALIZATION_NVP(C);
+            ar & BOOST_SERIALIZATION_NVP(tau);
+        }
+
+        template <class Archive>
+        void load(Archive& ar, const unsigned int version) {
+
+            /* FIXME: error: ‘class __gnu_cxx::hash_set<int>’ has no member named 'serialize' */
+            //ar & BOOST_SERIALIZATION_NVP(classes);
+            
+            ar & BOOST_SERIALIZATION_NVP(C);
+            ar & BOOST_SERIALIZATION_NVP(tau);
+        }
+
 };
 
 class LaRankOutput {

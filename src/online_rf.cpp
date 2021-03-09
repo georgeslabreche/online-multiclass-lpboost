@@ -207,8 +207,8 @@ OnlineTree::OnlineTree(const Hyperparameters& hp, const int& numClasses, const i
 }
 
 /* default constructor is necessary for serialization. */
-OnlineTree::OnlineTree() {
-
+OnlineTree::OnlineTree() : Classifier() {
+    m_name = "OnlineTree";
 }
 
 OnlineTree::~OnlineTree() {
@@ -232,6 +232,11 @@ OnlineRF::OnlineRF(const Hyperparameters& hp, const int& numClasses, const int& 
         tree = new OnlineTree(hp, numClasses, numFeatures, minFeatRange, maxFeatRange);
         m_trees.push_back(tree);
     }
+    m_name = "OnlineRF";
+}
+
+/* default constructor is necessary for serialization. */
+OnlineRF::OnlineRF() : Classifier() {
     m_name = "OnlineRF";
 }
 

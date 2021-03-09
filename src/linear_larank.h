@@ -30,6 +30,9 @@ class LinearLaRank: public Classifier {
       /* TODO: is there a way to preserve const? */
       LinearLaRank(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, VectorXd& minFeatRange, VectorXd& maxFeatRange);
 
+      /* default constructor is necessary for serialization. */
+      LinearLaRank();
+
       ~LinearLaRank();
 
       virtual void update(Sample& sample);
@@ -61,6 +64,7 @@ class LinearLaRank: public Classifier {
       template <class Archive>
       void save(Archive& ar, const unsigned int version) const {
          ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Classifier);
+         ar & BOOST_SERIALIZATION_NVP(*m_svm);
          ar & BOOST_SERIALIZATION_NVP(m_sampleCount);
          ar & BOOST_SERIALIZATION_NVP(const_cast<int&>(*m_numFeatures));
       }
@@ -68,6 +72,7 @@ class LinearLaRank: public Classifier {
       template <class Archive>
       void load(Archive& ar, const unsigned int version) {
          ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Classifier);
+         ar & BOOST_SERIALIZATION_NVP(*m_svm);
          ar & BOOST_SERIALIZATION_NVP(m_sampleCount);
          ar & BOOST_SERIALIZATION_NVP(const_cast<int&>(*m_numFeatures));
       }

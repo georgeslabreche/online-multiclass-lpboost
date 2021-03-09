@@ -25,9 +25,6 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <fstream>
 
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-
 #include "classifier.h"
 #include "data.h"
 #include "hyperparameters.h"
@@ -189,8 +186,8 @@ class OnlineNode {
          ar & BOOST_SERIALIZATION_NVP(m_parentCounter);
 
          /** FIXME: terminate called after throwing an instance of 'std::bad_alloc' */
-         //ar & BOOST_SERIALIZATION_NVP(*m_leftChildNode);
-         //ar & BOOST_SERIALIZATION_NVP(*m_rightChildNode);
+         ar & BOOST_SERIALIZATION_NVP(*m_leftChildNode);
+         ar & BOOST_SERIALIZATION_NVP(*m_rightChildNode);
          
 
          /** FIXME: triggers a pointer conflict error
@@ -223,10 +220,8 @@ class OnlineNode {
          ar & BOOST_SERIALIZATION_NVP(m_counter);
          ar & BOOST_SERIALIZATION_NVP(m_parentCounter);
 
-         /**
          ar & BOOST_SERIALIZATION_NVP(*m_leftChildNode);
          ar & BOOST_SERIALIZATION_NVP(*m_rightChildNode);
-         **/
 
          //ar & BOOST_SERIALIZATION_NVP(m_onlineTests);
          ar & BOOST_SERIALIZATION_NVP(*m_bestTest);
@@ -274,7 +269,6 @@ class OnlineTree: public Classifier {
    private:
       OnlineNode* m_rootNode;
 
-
       /* give access to serialization library */
       friend class boost::serialization::access;
       BOOST_SERIALIZATION_SPLIT_MEMBER();
@@ -298,6 +292,9 @@ class OnlineRF: public Classifier {
    /* removed const for minFeatRange and maxFeatRange to allow deserialization */
    /* TODO: is there a way to preserve const? */
    OnlineRF(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, VectorXd& minFeatRange, VectorXd& maxFeatRange);
+
+   /* default constructor is necessary for serialization. */
+   OnlineRF();
 
    ~OnlineRF();
     

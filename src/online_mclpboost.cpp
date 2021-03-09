@@ -14,13 +14,24 @@
  * For the OrbitAI experiment onboard ESA's OPS-SAT spacecraft.
  */
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/export.hpp> 
+
 #include "online_mclpboost.h"
+
+//BOOST_CLASS_EXPORT(OnlineMCLPBoost)
 
 /* removed const for minFeatRange and maxFeatRange to allow deserialization */
 /* TODO: is there a way to preserve const? */
 OnlineMCLPBoost::OnlineMCLPBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, 
                                  VectorXd& minFeatRange, VectorXd& maxFeatRange) :
     Booster(hp, numClasses, numFeatures, minFeatRange, maxFeatRange), m_nuD(hp.nuD), m_nuP(hp.nuP) {
+    m_name = "OnlineMCLPBoost";
+}
+
+/* default constructor is necessary for serialization. */
+OnlineMCLPBoost::OnlineMCLPBoost() : Booster() {
     m_name = "OnlineMCLPBoost";
 }
 

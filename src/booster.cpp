@@ -44,6 +44,10 @@ Booster::Booster(const Hyperparameters& hp, const int& numClasses, const int& nu
 
 }
 
+Booster::Booster() : Classifier() {
+    
+}
+
 Booster::~Booster() {
     for (int nBase = 0; nBase < m_hp->numBases; nBase++) {
         delete m_bases[nBase];
