@@ -23,7 +23,7 @@ Input arguments:
       --larank : use Online LaRank algorithm.
 
  Example:
-      ./OrbitAI_OMCBoost -c conf/omcb.conf --data data/dna-train.data --labels data/dna-train.labels --new models/model_larank --larank
+      ./OrbitAI_OMCBoost -c conf/omcb.conf --data data/dna-train.data --labels data/dna-train.labels --new models/model_orf --orf
 
 Config file:
 ============

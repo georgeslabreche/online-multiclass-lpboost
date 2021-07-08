@@ -9,9 +9,11 @@
  * Copyright (C) 2010 Amir Saffari, 
  *                    Institute for Computer Graphics and Vision, 
  *                    Graz University of Technology, Austria
+ * 
+ * Modified 2021 Georges Labreche, georges@tanagraspace.org
+ * For the OrbitAI experiment onboard ESA's OPS-SAT spacecraft.
  */
 
-//#if 0
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -44,7 +46,7 @@ void help() {
     cout << "\t -c : \t\t path to the config file." << endl << endl;
     cout << "\t --data : \t path to the training data file." << endl;
     cout << "\t --labels : \t path to the training labels file." << endl;
-    cout << "\t --new | --update : \t path to the model file to save to (--save) or load from and update (--update)." << endl << endl;
+    cout << "\t --new | --update : \t path to the model file to save to (--new) or load from and update (--update)." << endl << endl;
     cout << "\t --ort : \t use Online Random Tree (ORT) algorithm." << endl;
     cout << "\t --orf : \t use Online Random Forest (ORF) algorithm." << endl;
     cout << "\t --omcb : \t use Online MCBoost algorithm." << endl;
@@ -235,9 +237,17 @@ int main(int argc, char *argv[]) {
 #endif
     }
 
+/*
+    if(classifier == LARANK || classifier == ORF){
+        
+        pModel->save(modelFilename);
+    }
+*/
+
+    pModel->save(modelFilename);
+
     // Preparing for exit
     delete pModel;
 
     return EXIT_SUCCESS;
 }
-//#endif

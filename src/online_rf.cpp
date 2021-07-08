@@ -9,15 +9,24 @@
  * Copyright (C) 2010 Amir Saffari, 
  *                    Institute for Computer Graphics and Vision, 
  *                    Graz University of Technology, Austria
+ *
+ * Modified 2021 Georges Labreche, georges@tanagraspace.org
+ * For the OrbitAI experiment onboard ESA's OPS-SAT spacecraft.
  */
 
 #include "online_rf.h"
 
-RandomTest::RandomTest(const int& numClasses, const int& numFeatures, const VectorXd &minFeatRange, const VectorXd &maxFeatRange) :
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
+RandomTest::RandomTest(const int& numClasses, const int& numFeatures, VectorXd &minFeatRange, VectorXd &maxFeatRange) :
     m_numClasses(&numClasses), m_trueCount(0.0), m_falseCount(0.0),
     m_trueStats(VectorXd::Zero(numClasses)), m_falseStats(VectorXd::Zero(numClasses)) {
     m_feature = randDouble(0, numFeatures + 1);
     m_threshold = randDouble(minFeatRange(m_feature), maxFeatRange(m_feature));
+}
+
+/* default constructor is necessary for serialization. */
+RandomTest::RandomTest() {
 }
 
 void RandomTest::update(const Sample& sample) {
@@ -61,7 +70,9 @@ void RandomTest::updateStats(const Sample& sample, const bool& decision) {
     }
 }    
 
-OnlineNode::OnlineNode(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange, 
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
+OnlineNode::OnlineNode(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, VectorXd& minFeatRange, VectorXd& maxFeatRange, 
                        const int& depth) :
     m_numClasses(&numClasses), m_depth(depth), m_isLeaf(true), m_hp(&hp), m_label(-1),
     m_counter(0.0), m_parentCounter(0.0), m_labelStats(VectorXd::Zero(numClasses)),
@@ -72,7 +83,9 @@ OnlineNode::OnlineNode(const Hyperparameters& hp, const int& numClasses, const i
     }
 }
     
-OnlineNode::OnlineNode(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange, 
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
+OnlineNode::OnlineNode(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, VectorXd& minFeatRange, VectorXd& maxFeatRange, 
                        const int& depth, const VectorXd& parentStats) :
     m_numClasses(&numClasses), m_depth(depth), m_isLeaf(true), m_hp(&hp), m_label(-1),
     m_counter(0.0), m_parentCounter(parentStats.sum()), m_labelStats(parentStats),
@@ -82,6 +95,10 @@ OnlineNode::OnlineNode(const Hyperparameters& hp, const int& numClasses, const i
     for (int nTest = 0; nTest < hp.numRandomTests; nTest++) {
         m_onlineTests.push_back(new RandomTest(numClasses, numFeatures, minFeatRange, maxFeatRange));
     }
+}
+
+/* default constructor is necessary for serialization. */
+OnlineNode::OnlineNode() {
 }
     
 OnlineNode::~OnlineNode() {
@@ -180,10 +197,17 @@ bool OnlineNode::shouldISplit() const {
     }
 }
 
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
 OnlineTree::OnlineTree(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, 
-                       const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
+                        VectorXd& minFeatRange, VectorXd& maxFeatRange) :
     Classifier(hp, numClasses) {
     m_rootNode = new OnlineNode(hp, numClasses, numFeatures, minFeatRange, maxFeatRange, 0);
+    m_name = "OnlineTree";
+}
+
+/* default constructor is necessary for serialization. */
+OnlineTree::OnlineTree() : Classifier() {
     m_name = "OnlineTree";
 }
 
@@ -199,13 +223,20 @@ void OnlineTree::eval(Sample& sample, Result& result) {
     m_rootNode->eval(sample, result);
 }
 
-OnlineRF::OnlineRF(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
+OnlineRF::OnlineRF(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, VectorXd& minFeatRange, VectorXd& maxFeatRange) :
     Classifier(hp, numClasses), m_counter(0.0), m_oobe(0.0) {
     OnlineTree *tree;
     for (int nTree = 0; nTree < hp.numTrees; nTree++) {
         tree = new OnlineTree(hp, numClasses, numFeatures, minFeatRange, maxFeatRange);
         m_trees.push_back(tree);
     }
+    m_name = "OnlineRF";
+}
+
+/* default constructor is necessary for serialization. */
+OnlineRF::OnlineRF() : Classifier() {
     m_name = "OnlineRF";
 }
 

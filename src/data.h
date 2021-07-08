@@ -13,6 +13,12 @@
 
 #ifndef DATA_H_
 #define DATA_H_
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include <fstream>
 #include <stdlib.h>
@@ -28,11 +34,53 @@ using namespace Eigen;
 
 // DATA CLASSES
 class Sample {
-public:
-    VectorXd x;
-    int y;
-    double w;
-    int id;
+    public:
+        VectorXd x;
+        int y;
+        double w;
+        int id;
+
+        virtual void save(const std::string& filename) {
+            std::ofstream ofs(filename);
+            boost::archive::text_oarchive oa(ofs);
+            oa << *this;
+            ofs.close();
+        }
+
+        virtual void load(const std::string& filename) {
+            std::ifstream ifs(filename);
+            boost::archive::text_iarchive ia(ifs);
+            ia >> *this;
+            ifs.close();
+        }
+
+    private:
+        /* give access to serialization library */
+        friend class boost::serialization::access;
+        BOOST_SERIALIZATION_SPLIT_MEMBER();
+        template <class Archive>
+        void save(Archive& ar, const unsigned int version) const {
+
+            vector<double> x_vector(x.data(), x.data() + x.size());
+
+            ar & BOOST_SERIALIZATION_NVP(x_vector);
+            ar & BOOST_SERIALIZATION_NVP(y);
+            ar & BOOST_SERIALIZATION_NVP(w);
+            ar & BOOST_SERIALIZATION_NVP(id);
+        }
+
+        template <class Archive>
+        void load(Archive& ar, const unsigned int version) {
+
+            vector<double> x_vector;
+
+            ar & BOOST_SERIALIZATION_NVP(x_vector);
+            ar & BOOST_SERIALIZATION_NVP(y);
+            ar & BOOST_SERIALIZATION_NVP(w);
+            ar & BOOST_SERIALIZATION_NVP(id);
+
+            x = Map<VectorXd>(&x_vector[0], x_vector.size());
+        }
 };
 
 class DataSet {
@@ -67,6 +115,39 @@ public:
     Sample cacheSample;
     double margin;
     int yPrime; // Class with closest margin to the sample
+
+    public:
+        virtual void save(const std::string& filename) {
+            std::ofstream ofs(filename);
+            boost::archive::text_oarchive oa(ofs);
+            oa << *this;
+            ofs.close();
+        }
+
+        virtual void load(const std::string& filename) {
+            std::ifstream ifs(filename);
+            boost::archive::text_iarchive ia(ifs);
+            ia >> *this;
+            ifs.close();
+        }
+
+    private:
+        /* give access to serialization library */
+        friend class boost::serialization::access;
+        BOOST_SERIALIZATION_SPLIT_MEMBER();
+        template <class Archive>
+        void save(Archive& ar, const unsigned int version) const {
+            ar & BOOST_SERIALIZATION_NVP(cacheSample);
+            ar & BOOST_SERIALIZATION_NVP(margin);
+            ar & BOOST_SERIALIZATION_NVP(yPrime);
+        }
+
+        template <class Archive>
+        void load(Archive& ar, const unsigned int version) {
+            ar & BOOST_SERIALIZATION_NVP(cacheSample);
+            ar & BOOST_SERIALIZATION_NVP(margin);
+            ar & BOOST_SERIALIZATION_NVP(yPrime);
+        }
 };
 
 #endif /* DATA_H_ */

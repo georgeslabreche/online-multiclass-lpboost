@@ -9,16 +9,26 @@
  * Copyright (C) 2010 Amir Saffari, 
  *                    Institute for Computer Graphics and Vision, 
  *                    Graz University of Technology, Austria
+ *
+ * Modified 2021 Georges Labreche, georges@tanagraspace.org
+ * For the OrbitAI experiment onboard ESA's OPS-SAT spacecraft.
  */
 
 #include "linear_larank.h"
 
+/* removed const for minFeatRange and maxFeatRange to allow deserialization */
+/* TODO: is there a way to preserve const? */
 LinearLaRank::LinearLaRank(const Hyperparameters& hp, const int& numClasses, const int& numFeatures,
-                           const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
+                        VectorXd& minFeatRange, VectorXd& maxFeatRange) :
     Classifier(hp, numClasses), m_sampleCount(0), m_numFeatures(&numFeatures) {
     m_svm = new LaRank();
     m_svm->tau = 0.0001;
     m_svm->C = hp.larankC;
+    m_name = "LinearLaRank";
+}
+
+/* default constructor is necessary for serialization. */
+LinearLaRank::LinearLaRank() : Classifier() {
     m_name = "LinearLaRank";
 }
 
